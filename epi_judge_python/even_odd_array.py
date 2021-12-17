@@ -8,8 +8,15 @@ from test_framework.test_utils import enable_executor_hook
 
 
 def even_odd(A: List[int]) -> None:
-    # TODO - you fill in here.
-    return
+    ptr, first_odd = 0, len(A)
+    while ptr < first_odd:
+        if A[ptr] % 2 == 1:
+            # Can do an atomic swap like this
+            A[ptr], A[first_odd - 1] = A[first_odd - 1], A[ptr]
+            first_odd -= 1
+        else:
+            ptr += 1
+    return A
 
 
 @enable_executor_hook

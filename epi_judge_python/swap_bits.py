@@ -2,8 +2,12 @@ from test_framework import generic_test
 
 
 def swap_bits(x, i, j):
-    # TODO - you fill in here.
-    return 0
+    # Check if bits are different
+    if ((x >> i & 0x1) == (x >> j & 0x1)):
+        return x
+    # Flip each using xor mask
+    mask = (1 << i) | (1 << j)
+    return x ^ mask
 
 
 if __name__ == '__main__':

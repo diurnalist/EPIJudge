@@ -4,7 +4,11 @@ from test_framework import generic_test
 
 
 def can_reach_end(A: List[int]) -> bool:
-    # TODO - you fill in here.
+    furthest = 0
+    for i, steps in enumerate(A):
+        if i > furthest:
+            return False
+        furthest = max(furthest, i + steps)
     return True
 
 
