@@ -8,22 +8,29 @@ from test_framework.random_sequence_checker import run_func_with_retries
 from test_framework.test_utils import enable_executor_hook
 
 
-def nonuniform_random_number_generation(values: List[int],
-                                        probabilities: List[float]) -> int:
-    # TODO - you fill in here.
-    return 0
+import bisect
+import itertools
+import random
+
+
+def nonuniform_random_number_generation(
+    values: List[int], probabilities: List[float]
+) -> int:
+    cumsum = list(itertools.accumulate(probabilities))
+    idx = bisect.bisect(cumsum, random.random())
+    return values[idx]
 
 
 @enable_executor_hook
-def nonuniform_random_number_generation_wrapper(executor, values,
-                                                probabilities):
-    def nonuniform_random_number_generation_runner(executor, values,
-                                                   probabilities):
-        N = 10**6
-        result = executor.run(lambda: [
-            nonuniform_random_number_generation(values, probabilities)
-            for _ in range(N)
-        ])
+def nonuniform_random_number_generation_wrapper(executor, values, probabilities):
+    def nonuniform_random_number_generation_runner(executor, values, probabilities):
+        N = 10 ** 6
+        result = executor.run(
+            lambda: [
+                nonuniform_random_number_generation(values, probabilities)
+                for _ in range(N)
+            ]
+        )
 
         counts = collections.Counter(result)
         for v, p in zip(values, probabilities):
@@ -35,12 +42,17 @@ def nonuniform_random_number_generation_wrapper(executor, values,
         return True
 
     run_func_with_retries(
-        functools.partial(nonuniform_random_number_generation_runner, executor,
-                          values, probabilities))
+        functools.partial(
+            nonuniform_random_number_generation_runner, executor, values, probabilities
+        )
+    )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     exit(
         generic_test.generic_test_main(
-            'nonuniform_random_number.py', 'nonuniform_random_number.tsv',
-            nonuniform_random_number_generation_wrapper))
+            "nonuniform_random_number.py",
+            "nonuniform_random_number.tsv",
+            nonuniform_random_number_generation_wrapper,
+        )
+    )
