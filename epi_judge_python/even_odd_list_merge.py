@@ -5,8 +5,20 @@ from test_framework import generic_test
 
 
 def even_odd_merge(L: ListNode) -> Optional[ListNode]:
-    # TODO - you fill in here.
-    return None
+    even, odd = ListNode(), ListNode()
+    even_head, odd_head = even, odd
+    i, node = 0, L
+    while node:
+        if i % 2 == 0:
+            even.next = node
+            even = even.next
+        else:
+            odd.next = node
+            odd = odd.next
+        i, node = i + 1, node.next
+    even.next = odd_head.next
+    odd.next = None
+    return even_head.next
 
 
 if __name__ == '__main__':
