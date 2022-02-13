@@ -3,18 +3,17 @@ from test_framework import generic_test
 
 def shortest_equivalent_path(path: str) -> str:
     shortest = []
+    if path.startswith("/"):
+        shortest.append("")
     for part in path.split("/"):
-        if part == "":
-            if not shortest:
-                shortest.append(part)
-        elif part == "..":
+        if part == "..":
             if not shortest or shortest[-1] == "..":
                 shortest.append(part)
             else:
                 shortest.pop()
-        elif part != ".":
+        elif part and part != ".":
             shortest.append(part)
-    return "/".join(shortest)
+    return "/".join(shortest).rstrip("/") or "/"
 
 
 if __name__ == "__main__":
