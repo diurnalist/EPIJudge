@@ -1,17 +1,26 @@
 from binary_tree_node import BinaryTreeNode
 from test_framework import generic_test
 
+from collections import namedtuple
 
 def is_balanced_binary_tree(tree: BinaryTreeNode) -> bool:
-    # Check that left branch doesn't have height greater than other branch (plus 1)
-    def _subtree_height(node: BinaryTreeNode):
-        if not node:
-            return 0
-        return 1 + max(_subtree_height(node.left), _subtree_height(node.right))
+    Check = namedtuple("Check", ["height", "balanced"])
 
-    print(_subtree_height(tree.left))
-    print(_subtree_height(tree.right))
-    return abs(_subtree_height(tree.left) - _subtree_height(tree.right)) <= 1
+    def _check(tree: BinaryTreeNode):
+        if not tree:
+            return Check(-1, True)
+        left_branch = _check(tree.left)
+        if not left_branch.balanced:
+            return left_branch
+        right_branch = _check(tree.right)
+        if not right_branch.balanced:
+            return right_branch
+        return Check(
+            max(left_branch.height, right_branch.height) + 1,
+            abs(left_branch.height - right_branch.height) <= 1
+        )
+
+    return _check(tree).balanced
 
 
 if __name__ == "__main__":
