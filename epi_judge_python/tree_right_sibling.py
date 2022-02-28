@@ -13,8 +13,14 @@ class BinaryTreeNode:
 
 
 def construct_right_sibling(tree: BinaryTreeNode) -> None:
-    # TODO - you fill in here.
-    return
+    if not tree or not tree.left:
+        return
+    tree.left.next = tree.right
+    # bridge adjascent subtrees
+    if tree.right and tree.next:
+        tree.right.next = tree.next.left
+    construct_right_sibling(tree.left)
+    construct_right_sibling(tree.right)
 
 
 def traverse_next(node):
@@ -35,8 +41,7 @@ def clone_tree(original):
     if not original:
         return None
     cloned = BinaryTreeNode(original.data)
-    cloned.left, cloned.right = clone_tree(original.left), clone_tree(
-        original.right)
+    cloned.left, cloned.right = clone_tree(original.left), clone_tree(original.right)
     return cloned
 
 
@@ -46,12 +51,14 @@ def construct_right_sibling_wrapper(executor, tree):
 
     executor.run(functools.partial(construct_right_sibling, cloned))
 
-    return [[n.data for n in traverse_next(level)]
-            for level in traverse_left(cloned)]
+    return [[n.data for n in traverse_next(level)] for level in traverse_left(cloned)]
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     exit(
-        generic_test.generic_test_main('tree_right_sibling.py',
-                                       'tree_right_sibling.tsv',
-                                       construct_right_sibling_wrapper))
+        generic_test.generic_test_main(
+            "tree_right_sibling.py",
+            "tree_right_sibling.tsv",
+            construct_right_sibling_wrapper,
+        )
+    )
